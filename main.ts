@@ -2,12 +2,12 @@
 // 256-value data stack, 64-frame call stack, 256 words of memory, IN/OUT, ten traps, step and output limits),
 // each step checked in the reference VM's order: step limit, pc bounds, opcode, immediate fit, underflow,
 // overflow, then the instruction's own traps; a trap keeps the output written before it. One run answers a
-// whole set: /input/<id>/{program.bin,input.bin} -> /output/<id>/{stdout.bin,exit.txt}; MAKEFUN_INPUT_DIR
-// and MAKEFUN_OUTPUT_DIR override the two roots locally. Opcode facts sit in F as imm|pops<<3|pushes<<5.
+// whole set: /input/<id>/{program.bin,input.bin} -> /output/<id>/{stdout.bin,exit.txt}; MAKEFUN_INPUT_DIR and
+// MAKEFUN_OUTPUT_DIR override the two roots locally. F holds opcode facts as imm|pops<<3|pushes<<5, read from
+// S (two hex digits per opcode, then its fact + 32 as one char), and enc turns PRINT's value into decimal ASCII.
 import{mkdirSync,readdirSync,readFileSync,writeFileSync}from"node:fs";import{join}from"node:path";
-const F=new Uint8Array(256).fill(255),S='00 01A02D03(04h05p06\x9007\x9810P11P12P13P14P15P16P17H18P19P1aP1bH1cP1dP1eP20P21P22P30"31*32*33"34 40H41050(51(52@53(';
+const F=new Uint8Array(256).fill(255),enc=new TextEncoder,S='00 01A02D03(04h05p06\x9007\x9810P11P12P13P14P15P16P17H18P19P1aP1bH1cP1dP1eP20P21P22P30"31*32*33"34 40H41050(51(52@53(';
 for(let i=0;i<111;i+=3)F[parseInt(S.slice(i,i+2),16)]=S.charCodeAt(i+2)-32;
-const enc=new TextEncoder;
 function run(P,z){
  const n=P.length,D=new Int32Array(256),C=new Int32Array(64),M=new Int32Array(256),o=new Uint8Array(65536);
  let sp=0,cp=0,ol=0,ip=0,pc=0,st=0;
